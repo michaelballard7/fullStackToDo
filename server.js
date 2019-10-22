@@ -1,6 +1,16 @@
 let express = require("express");
 let app = express();
+let mongoDb = require('mongodb');
+let db
 const path = require("path");
+
+let connStr = "mongodb+srv://root:rootuser@todotest-tokig.mongodb.net/toDoTest1?retryWrites=true&w=majority"
+mongoDb.connect(connStr,{useNewUrlParser:true},(err,client)=>{
+  db = client.db();
+  app.listen(3000, () => {
+    console.log("server is running...");
+  });
+})
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -61,9 +71,10 @@ app.get("/", (req, res) => {
 app.post("/create-item", (req, res) => {
   console.log('console this works')
   console.log(req.body.item)
-  res.send('this end point is working')
+  db.collection('items').insertOne({text:req.body.item},()=>{
+    res.send("this end point is working");
+  })
+  
 });
 
-app.listen(3000, () => {
-  console.log("server is running...");
-});
+
