@@ -3,7 +3,7 @@ let app = express();
 let mongoDb = require('mongodb');
 const path = require("path");
 let db;
-let connStr = require('./configer')
+let connStr = require('./config/configer')
 
 mongoDb.connect(connStr,{useNewUrlParser:true},(err,client)=>{
   db = client.db();
