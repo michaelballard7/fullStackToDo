@@ -5,6 +5,7 @@ const path = require("path");
 let db;
 let connStr = require("./config/configer");
 
+
 mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
   db = client.db();
   app.listen(3000, () => {
@@ -12,6 +13,7 @@ mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
   });
 });
 
+app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -67,6 +69,8 @@ app.get("/", (req, res) => {
           .join("")}
       </ul>
     </div>
+    <script src="app.js"> 
+    </script>
   </body>
 </html>
 `);
