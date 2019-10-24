@@ -6,18 +6,18 @@ let db;
 let connStr = require("./config/configer");
 
 mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
-  if (err){
-    console.error('an error occured', err)
-  }else{
-      db = client.db();
-      app.listen(3000, () => {
-        console.log("server is running...");
-      });
+  if (err) {
+    console.error("an error occured", err);
+  } else {
+    db = client.db();
+    app.listen(3000, () => {
+      console.log("server is running...");
+    });
   }
 });
 
 // neccessary express middleware
-app.use(express.static('public'));
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -66,7 +66,7 @@ app.get("/", (req, res) => {
         >
           <span class="item-text">${item.text}</span>
           <div>
-            <button class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
+            <button data-id="${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
             <button class="delete-me btn btn-danger btn-sm">Delete</button>
           </div>
         </li>`;
@@ -89,12 +89,27 @@ app.post("/create-item", (req, res) => {
   console.log("console this works");
   console.log(req.body.item);
   db.collection("items").insertOne({ text: req.body.item }, () => {
-    res.redirect('/')
+    res.redirect("/");
   });
 });
 
-app.post('/update-item', (req,res)=>{
+
+// 1. I need to study express and mongodb
+// 2. I need to practice J Script Dom api, ajax, 
+// 3. I need to practice layouts (flexbox / grid) and UI 
+
+app.post("/update-item", (req, res) => {
   console.log("this endpoint works");
-  console.log(req.body.text)
-  res.send("The server got it")
-})
+  db.collection("items").findOneAndUpdate(
+    { _id: new mongoDb.ObjectID(req.body.id) },
+    { $set: { text: req.body.text } },
+    () => {
+      try {
+        res.redirect("/");
+      } catch (error) {
+        console.error(error);
+        res.status(500).send(error.message);
+      }
+    }
+  );
+});
