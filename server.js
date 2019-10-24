@@ -5,16 +5,21 @@ const path = require("path");
 let db;
 let connStr = require("./config/configer");
 
-
 mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
-  db = client.db();
-  app.listen(3000, () => {
-    console.log("server is running...");
-  });
+  if (err){
+    console.error('an error occured', err)
+  }else{
+      db = client.db();
+      app.listen(3000, () => {
+        console.log("server is running...");
+      });
+  }
 });
 
-app.use(express.static('public'))
+// neccessary express middleware
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   db.collection("items")
@@ -69,6 +74,7 @@ app.get("/", (req, res) => {
           .join("")}
       </ul>
     </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="app.js"> 
     </script>
   </body>
@@ -86,3 +92,9 @@ app.post("/create-item", (req, res) => {
     res.redirect('/')
   });
 });
+
+app.post('/update-item', (req,res)=>{
+  console.log("this endpoint works");
+  console.log(req.body.text)
+  res.send("The server got it")
+})
