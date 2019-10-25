@@ -4,6 +4,7 @@ let mongoDb = require("mongodb");
 const path = require("path");
 let db;
 let connStr = require("./config/configer");
+let sanitizeHTML = require("sanitize-html");
 
 mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
   if (err) {
@@ -20,6 +21,19 @@ mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+//custom middleware
+let basicPasswordProtection = (req, res, next) => {
+  res.set("WWW-Authenticate", 'Basic realm="Simple To-Do App"');
+  console.log(req.headers.authorization);
+  if (req.headers.authorization == "Basic dG9kbzptYWxp") {
+    next();
+  } else {
+    res.status(401).send("Authentication required");
+  }
+};
+
+app.use(basicPasswordProtection);
 
 app.get("/", (req, res) => {
   db.collection("items")
@@ -76,17 +90,24 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create-item", (req, res) => {
-  db.collection("items").insertOne({ text: req.body.item }, (err, info) => {
+  let sanitizedInput = sanitizeHTML(req.body.item, {
+    allowedTags: [],
+    allowedAttributes: {}
+  });
+  db.collection("items").insertOne({ text: sanitizedInput }, (err, info) => {
     // allow the server to return data for last entry
     res.json(info.ops[0]);
   });
 });
 
 app.post("/update-item", (req, res) => {
-  console.log("this endpoint works");
+  let sanitizedInput = sanitizeHTML(req.body.text, {
+    allowedTags: [],
+    allowedAttributes: {}
+  });
   db.collection("items").findOneAndUpdate(
     { _id: new mongoDb.ObjectId(req.body.id) },
-    { $set: { text: req.body.text } },
+    { $set: { text: sanitizedInput } },
     () => {
       try {
         res.redirect("/");
