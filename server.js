@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
   </head>
   <body>
     <div class="container">
-      <h1 class="display-4 text-center py-1">To-Do App</h1>
+      <h1 class="display-4 text-center py-1">Michael's Daily Do List</h1>
 
       <div class="jumbotron p-3 shadow-sm">
         <form id="create-form" action="/create-item" method="POST">
@@ -58,23 +58,13 @@ app.get("/", (req, res) => {
           </div>
         </form>
       </div>
-
       <ul id="item-list" class="list-group pb-5">
-        ${items
-          .map(item => {
-            return `<li
-          class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
-        >
-          <span class="item-text">${item.text}</span>
-          <div>
-            <button data-id="${item._id}" class="edit-me btn btn-secondary btn-sm mr-1">Edit</button>
-            <button data-id="${item._id}" class="delete-me btn btn-danger btn-sm">Delete</button>
-          </div>
-        </li>`;
-          })
-          .join("")}
       </ul>
     </div>
+    <script>
+        // converts to an array of objects
+        let items = ${JSON.stringify(items)}
+    </script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="app.js"> 
     </script>
@@ -82,21 +72,14 @@ app.get("/", (req, res) => {
 </html>
 `);
     });
-
-  // res.sendFile(path.join(__dirname+'/index.html'))
 });
 
 app.post("/create-item", (req, res) => {
   db.collection("items").insertOne({ text: req.body.item }, (err, info) => {
-      // allow the server to return data for last entry
-      res.json(info.ops[0])
+    // allow the server to return data for last entry
+    res.json(info.ops[0]);
   });
 });
-
-
-// 1. I need to study express and mongodb
-// 2. I need to practice J Script Dom api, ajax,
-// 3. I need to practice layouts (flexbox / grid) and UI 
 
 app.post("/update-item", (req, res) => {
   console.log("this endpoint works");
@@ -114,9 +97,11 @@ app.post("/update-item", (req, res) => {
   );
 });
 
-app.post("/delete-item",(req,res)=>{
-  db.collection('items').deleteOne({_id: new mongoDb.ObjectId(req.body.id)},()=>{
-    res.send('recieved')
-  })
-
+app.post("/delete-item", (req, res) => {
+  db.collection("items").deleteOne(
+    { _id: new mongoDb.ObjectId(req.body.id) },
+    () => {
+      res.send("recieved");
+    }
+  );
 });

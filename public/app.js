@@ -1,15 +1,11 @@
-// create feature:
 
-document.getElementById("create-form").addEventListener('submit',(e)=>{
-  e.preventDefault();
-
-  // retrieve text from input
+// retrieve text from input
   let userInput = document.querySelector('#create-field')
 
   // retrieve list 
   let itemList = document.querySelector('#item-list');
 
-  // create a reusable function to create an item
+// create a reusable component function to create an item
   let itemTemplate = (input)=>{
     return `<li
           class="list-group-item list-group-item-action d-flex align-items-center justify-content-between"
@@ -22,7 +18,19 @@ document.getElementById("create-form").addEventListener('submit',(e)=>{
         </li>`;
   };
 
-  // create an axios post to the server
+// intial page load render:
+let ourHTML = items.map((item)=> {
+  return itemTemplate(item)
+}).join("");
+
+// append items to frontEnd:
+itemList.insertAdjacentHTML("beforeend",ourHTML)
+
+// create feature:
+document.getElementById("create-form").addEventListener('submit',(e)=>{
+  e.preventDefault();
+
+  // create an axios post to the server:
   axios.post('create-item',{item: userInput.value})
     .then((res)=>{
 
@@ -40,7 +48,7 @@ document.getElementById("create-form").addEventListener('submit',(e)=>{
 })
 
 
-// implement a event and function to capture input and post to a backend endpoint
+// implement a event and function to capture input and post to a backend endpoint:
 document.addEventListener("click", function(e) {
   // delete feature
   if (e.target.classList.contains("delete-me")) {
