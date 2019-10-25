@@ -6,17 +6,12 @@ let db;
 let connStr = require("./config/configer");
 let sanitizeHTML = require("sanitize-html");
 
-let port = process.env.PORT
-if(port == null || port==""){
-  port = 3000
-}
-
 mongoDb.connect(connStr, { useNewUrlParser: true }, (err, client) => {
   if (err) {
     console.error("an error occured", err);
   } else {
     db = client.db();
-    app.listen(port, () => {
+    app.listen(process.env.PORT || 3000, () => {
       console.log("server is running...");
     });
   }
