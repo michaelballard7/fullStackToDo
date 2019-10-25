@@ -53,8 +53,9 @@ app.get("/", (req, res) => {
               name="item"
               type="text"
               style="flex: 1;"
+              placeholder="Please enter an item"
             />
-            <button class="btn btn-primary">Add New Item</button>
+            <button class="btn btn-success">Add New Item</button>
           </div>
         </form>
       </div>

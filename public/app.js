@@ -29,22 +29,26 @@ itemList.insertAdjacentHTML("beforeend",ourHTML)
 // create feature:
 document.getElementById("create-form").addEventListener('submit',(e)=>{
   e.preventDefault();
+  if(userInput.value){
+     // create an axios post to the server:
+    axios.post('create-item',{item: userInput.value})
+      .then((res)=>{
 
-  // create an axios post to the server:
-  axios.post('create-item',{item: userInput.value})
-    .then((res)=>{
+        // create the html for a new item
+        itemList.insertAdjacentHTML('beforeend',itemTemplate(res.data));
 
-      // create the html for a new item
-      itemList.insertAdjacentHTML('beforeend',itemTemplate(res.data));
-
-      // clear field  and refocus
-      userInput.value = ""
-      userInput.focus()
-  
-    })
-    .catch(err => {
-      console.error(err.message)
-    })
+        // clear field  and refocus
+        userInput.value = ""
+        userInput.focus()
+    
+      })
+      .catch(err => {
+        console.error(err.message)
+      })
+  }else{
+    alert("Please enter an item before submitting!")
+  }
+ 
 })
 
 
