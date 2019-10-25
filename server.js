@@ -43,10 +43,11 @@ app.get("/", (req, res) => {
       <h1 class="display-4 text-center py-1">To-Do App</h1>
 
       <div class="jumbotron p-3 shadow-sm">
-        <form action="/create-item" method="POST">
+        <form id="create-form" action="/create-item" method="POST">
           <div class="d-flex align-items-center">
             <input
               autofocus
+              id="create-field"
               autocomplete="off"
               class="form-control mr-3"
               name="item"
@@ -58,7 +59,7 @@ app.get("/", (req, res) => {
         </form>
       </div>
 
-      <ul class="list-group pb-5">
+      <ul id="item-list" class="list-group pb-5">
         ${items
           .map(item => {
             return `<li
@@ -86,16 +87,15 @@ app.get("/", (req, res) => {
 });
 
 app.post("/create-item", (req, res) => {
-  console.log("console this works");
-  console.log(req.body.item);
-  db.collection("items").insertOne({ text: req.body.item }, () => {
-    res.redirect("/");
+  db.collection("items").insertOne({ text: req.body.item }, (err, info) => {
+      // allow the server to return data for last entry
+      res.json(info.ops[0])
   });
 });
 
 
 // 1. I need to study express and mongodb
-// 2. I need to practice J Script Dom api, ajax, 
+// 2. I need to practice J Script Dom api, ajax,
 // 3. I need to practice layouts (flexbox / grid) and UI 
 
 app.post("/update-item", (req, res) => {
